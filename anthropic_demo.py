@@ -3,6 +3,25 @@ from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
+from bs4 import BeautifulSoup as Soup
+from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+
+# LCEL docs
+url = "https://python.langchain.com/docs/concepts/lcel/"
+loader = RecursiveUrlLoader(
+    url=url, max_depth=20, extractor=lambda x: Soup(x, "html.parser").text
+)
+docs = loader.load()
+
+# Sort the list based on the URLs and get the text
+d_sorted = sorted(docs, key=lambda x: x.metadata["source"])
+d_reversed = list(reversed(d_sorted))
+concatenated_content = "\n\n\n --- \n\n\n".join(
+    [doc.page_content for doc in d_reversed]
+)
+
+print(f"Total number of lines: {len(concatenated_content.split('\n'))}")
+
 
 # Data model
 class code(BaseModel):
@@ -100,6 +119,15 @@ def parse_output(solution):
 
 
 # Optional: With re-try to correct for failure to invoke tool
-code_gen_chain = code_gen_chain_re_try | parse_output
-# No re-try
+# code_gen_chain = code_gen_chain_re_try | parse_output
+# # No re-try
 code_gen_chain = code_gen_prompt_claude | structured_llm_claude | parse_output
+
+
+# Test
+question = "How do I build a RAG chain in LCEL?"
+solution = code_gen_chain.invoke(
+    {"context": concatenated_content, "messages": [("user", question)]}
+)
+__import__('ipdb').set_trace()
+solution
