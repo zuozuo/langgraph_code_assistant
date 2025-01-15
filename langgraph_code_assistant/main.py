@@ -25,12 +25,23 @@ def generate(
         # Initialize components
         generator = CodeGenerator(model=model, provider=provider)
         evaluator = CodeEvaluator()
-        # state_machine = CodeAssistantStateMachine()
+        state_machine = CodeAssistantStateMachine()
         
-        # Generate solution
-        solution = generator.generate(context, question)
+        # Initialize state
+        initial_state = {
+            "error": "no",
+            "messages": [("user", question)],
+            "generation": None,
+            "iterations": 0
+        }
         
-        # Evaluate solution
+        # Run state machine
+        final_state = state_machine.compile().invoke(initial_state)
+        
+        # Get final solution
+        solution = final_state["generation"]
+        
+        # Evaluate final solution
         evaluation = evaluator.evaluate_solution(solution)
         
         # Output results

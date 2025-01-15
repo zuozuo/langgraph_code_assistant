@@ -33,13 +33,50 @@ class CodeAssistantStateMachine:
         )
 
     def _generate_code(self, state: GraphState) -> dict:
-        """Generate code solution"""
-        # Implementation would use CodeGenerator
+        """Generate code solution using CodeGenerator"""
+        from .code_generator import CodeGenerator
+        
+        # Get current state
+        messages = state["messages"]
+        iterations = state["iterations"]
+        
+        # Initialize generator (you may want to pass model/provider from config)
+        generator = CodeGenerator()
+        
+        # Generate solution using last user message
+        last_user_message = next(msg for msg in reversed(messages) if msg[0] == "user")
+        solution = generator.generate(context="", question=last_user_message[1])
+        
+        # Update state
+        state["generation"] = solution
+        state["iterations"] = iterations + 1
+        
+        # Add assistant response to messages
+        state["messages"].append(("assistant", f"Generated solution:\n{solution.code}"))
+        
         return state
 
     def _check_code(self, state: GraphState) -> dict:
-        """Check code imports and execution"""
-        # Implementation would execute and validate code
+        """Check code imports and execution using CodeEvaluator"""
+        from .evaluator import CodeEvaluator
+        
+        # Get current state
+        solution = state["generation"]
+        evaluator = CodeEvaluator()
+        
+        # Evaluate solution
+        evaluation = evaluator.evaluate_solution(solution)
+        
+        # Update state based on evaluation
+        if not evaluation["imports_valid"]:
+            state["error"] = "yes"
+            state["messages"].append(("system", "Import check failed"))
+        elif not evaluation["code_executes"]:
+            state["error"] = "yes"
+            state["messages"].append(("system", "Code execution failed"))
+        else:
+            state["error"] = "no"
+            
         return state
 
     def _decide_next_step(self, state: GraphState) -> str:
