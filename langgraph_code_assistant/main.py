@@ -8,10 +8,10 @@ app = typer.Typer()
 
 @app.command()
 def generate(
-    question: str,
-    context_file: Path = typer.Option(..., help="Path to context documentation"),
-    model: str = typer.Option("openai/gpt-4o", help="Model to use for generation"),
-    provider: str = typer.Option("openai", help="LLM provider (openai/anthropic)")
+    question: str = typer.Argument(..., help="The coding question to answer"),
+    context_file: Path = typer.Option(..., "--context-file", "-c", help="Path to context documentation"),
+    model: str = typer.Option("openai/gpt-4o", "--model", "-m", help="Model to use for generation"),
+    provider: str = typer.Option("openai", "--provider", "-p", help="LLM provider (openai/anthropic)")
 ):
     """Generate code solution for a given question"""
     # Load context
