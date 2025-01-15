@@ -15,6 +15,7 @@ langgraph = "^0.2.62"
 bs4 = "^0.0.2"
 pydantic = "^2.10.5"
 ipython = "^8.31.0"
+typer = "^0.12.3"
 
 
 [build-system]
