@@ -25,7 +25,7 @@ def generate(
         # Initialize components
         generator = CodeGenerator(model=model, provider=provider)
         evaluator = CodeEvaluator()
-        state_machine = CodeAssistantStateMachine()
+        # state_machine = CodeAssistantStateMachine()
         
         # Generate solution
         solution = generator.generate(context, question)
