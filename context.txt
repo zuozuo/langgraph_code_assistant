@@ -1,0 +1,18 @@
+Python Classes Documentation:
+
+A class is a blueprint for creating objects. Objects have properties and methods (functions) associated with them. 
+Classes provide a means of bundling data and functionality together.
+
+Basic class syntax:
+class ClassName:
+    def __init__(self):
+        # constructor method
+        pass
+    
+    def method(self):
+        # class method
+        pass
+
+Example usage:
+my_object = ClassName()
+my_object.method() 
