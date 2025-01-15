@@ -15,6 +15,8 @@ concatenated_content = "\n\n\n --- \n\n\n".join(
     [doc.page_content for doc in d_reversed]
 )
 
+print(f"Total number of lines: {len(concatenated_content.split('\n'))}")
+
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -49,9 +51,11 @@ class code(BaseModel):
 
 # llm = ChatOpenAI(temperature=0, model="anthropic/claude-3.5-sonnet")
 llm = ChatOpenAI(temperature=0, model="openai/gpt-4o")
+__import__('ipdb').set_trace()
 code_gen_chain_oai = code_gen_prompt | llm.with_structured_output(code)
 question = "How do I build a RAG chain in LCEL?"
 solution = code_gen_chain_oai.invoke(
     {"context": concatenated_content, "messages": [("user", question)]}
 )
+__import__('ipdb').set_trace()
 solution
